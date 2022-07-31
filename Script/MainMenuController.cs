@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
+
+    // add annotation
     public void PlayGame()
     {
         string clickedObj = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name;
