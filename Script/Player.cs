@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        // add some extra function
         myBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
