@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonsterSpawner : MonoBehaviour
+public class MonsterSpawner : MonoBehaviour, IDataPersistence
 {
     [SerializeField]
     private GameObject[] monsterReference;
@@ -15,9 +15,21 @@ public class MonsterSpawner : MonoBehaviour
     private int randomIndex;
     private int randomSide;
 
+    private List<MonsterData> monsters;
+
+    private void Awake()
+    {
+        
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        //foreach (MonsterData monster in monsters)
+        //{
+        //    GameObject m = Instantiate(monsterReference[monster.Type], monster.position);
+        //    m.GetComponent<Monster>().Type = monster.Type;
+        //}
         StartCoroutine(SpawnMonsters());
     }
 
@@ -25,10 +37,11 @@ public class MonsterSpawner : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(Random.Range(1, 5));
+            yield return new WaitForSeconds(10);
             randomIndex = Random.Range(0, monsterReference.Length);
             randomSide = Random.Range(0, 2);
             spawnedMonster = Instantiate(monsterReference[randomIndex]);
+            spawnedMonster.GetComponent<Monster>().Type = randomIndex;
 
             if (randomSide == 0)
             {
@@ -48,6 +61,36 @@ public class MonsterSpawner : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {
+        
+    }
+
+    public void LoadData(GameData gameData)
+    {
+        
+    }
+
+    public void LoadData(ClientData clientData)
+    {
+        this.monsters = clientData.monsters;
+    }
+
+    public void LoadData(ServerData serverData)
+    {
+        
+    }
+
+    public void SaveData(ref GameData gameData)
+    {
+        
+    }
+
+    public void SaveData(ref ClientData clientData)
+    {
+        
+    }
+
+    public void SaveData(ref ServerData serverData)
     {
         
     }

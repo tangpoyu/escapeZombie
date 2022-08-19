@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IDataPersistence
 {
     [SerializeField]
     private float moveForce = 10f;
@@ -95,5 +95,36 @@ public class Player : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void LoadData(GameData gameData)
+    {
+       
+    }
+
+    public void LoadData(ClientData clientData)
+    {
+        this.transform.position = clientData.playerPosition;
+    }
+
+    public void LoadData(ServerData serverData)
+    {
+       
+    }
+
+    public void SaveData(ref GameData gameData)
+    {
+        var obj = gameData.ClientData;
+        SaveData(ref obj);
+    }
+
+    public void SaveData(ref ClientData clientData)
+    {
+       clientData.playerPosition = this.transform.position;
+    }
+
+    public void SaveData(ref ServerData serverData)
+    {
+        
     }
 }
