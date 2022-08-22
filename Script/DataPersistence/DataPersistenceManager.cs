@@ -206,6 +206,7 @@ public class DataPersistenceManager : MonoBehaviour
             fileDataHandler.SaveToServer(gameData);
         }
         resetCurrentProfileData();
+        GameDataManager.instance.StopAllCoroutines();
         SceneManager.LoadScene("LoadScene");
     }
 

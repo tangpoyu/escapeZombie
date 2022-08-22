@@ -35,7 +35,6 @@ public class GameDataManager : MonoBehaviour, IDataPersistence
     {
         if (scene.name == "SampleScene")
         {
-            StopCoroutine(AddScore());
             StartCoroutine(AddScore());
         }
     }
@@ -118,7 +117,7 @@ public class GameDataManager : MonoBehaviour, IDataPersistence
 
     IEnumerator AddScore()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(10);
         if (GameObject.FindWithTag("Player") != null)
         {
             Score++;
