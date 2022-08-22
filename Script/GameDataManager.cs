@@ -50,6 +50,7 @@ public class GameDataManager : MonoBehaviour, IDataPersistence
 
         ClientData clientData = null;
         clientDatas._clientDatas.TryGetValue(playerName, out clientData);
+        profileId = clientData.currentProfileData.profileId;
         CharIndex = clientData.currentProfileData.charIndex;
         Score = clientData.currentProfileData.score;
     }

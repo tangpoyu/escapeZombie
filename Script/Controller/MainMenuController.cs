@@ -32,7 +32,7 @@ public class MainMenuController : MonoBehaviour
 
     public void Continue()
     {
-        // TODO : implement the funtion which makes player can play the last time saved game.
+        SceneManager.LoadScene("LoadScene");
     }
 }
 

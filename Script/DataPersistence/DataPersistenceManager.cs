@@ -127,6 +127,7 @@ public class DataPersistenceManager : MonoBehaviour
         }
     }
 
+
     public void Load(Data data, string type)
     {
         FindAllDataPersistenceObjects();
