@@ -7,11 +7,17 @@ using UnityEngine.SceneManagement;
 // Controller : To use data of GameDataManger to display them in the GamePlayUI timely.
 public class GameplayUiController : MonoBehaviour
 {
-   
+    public DataPersistenceManager DataPersistenceManager
+    {
+        get => default;
+        set
+        {
+        }
+    }
+
     public void Restart()
     {
         DataPersistenceManager.instance.Restart();
-       
     }
 
     public void GoHome()
@@ -25,7 +31,7 @@ public class GameplayUiController : MonoBehaviour
     {
         if (GameObject.FindWithTag("Player") != null)
         {
-            print(DataPersistenceManager.instance.SaveGame()); // Service
+          print(DataPersistenceManager.instance.SaveGame()); // Service
         }
         else
         {
@@ -46,6 +52,11 @@ public class GameplayUiController : MonoBehaviour
             GameObject.FindWithTag("Hint").GetComponent<UnityEngine.UI.Text>().text = "You died......";
             enabled = false;
         }
+    }
+
+    private void Awake()
+    {
+        
     }
 
     private void Start()

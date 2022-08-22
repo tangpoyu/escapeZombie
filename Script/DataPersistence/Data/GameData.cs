@@ -5,17 +5,17 @@ using UnityEngine;
 
 [System.Serializable]
 // Model
-public class GameData
+public class GameData : Data
 {
     private ServerData serverData;
-    private ClientData clientData;
+    private ClientDatas clientDatas;
 
     public ServerData ServerData { get => serverData; set => serverData = value; }
-    public ClientData ClientData { get => clientData; set => clientData = value; }
+    public ClientDatas ClientDatas { get => clientDatas; set => clientDatas = value; }
 
     public GameData()
     {
         ServerData = new ServerData();
-        ClientData = new ClientData();
+        ClientDatas = new ClientDatas();
     }
 }

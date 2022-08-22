@@ -102,9 +102,16 @@ public class Player : MonoBehaviour, IDataPersistence
        
     }
 
+    public void LoadData(ClientDatas clientDatas)
+    {
+        ClientData clientData = null;
+        clientDatas._clientDatas.TryGetValue(GameDataManager.instance.PlayerName, out clientData);
+        this.transform.position = clientData.currentProfileData.playerPosition;
+    }
+
     public void LoadData(ClientData clientData)
     {
-        this.transform.position = clientData.playerPosition;
+        
     }
 
     public void LoadData(ServerData serverData)
@@ -114,17 +121,22 @@ public class Player : MonoBehaviour, IDataPersistence
 
     public void SaveData(ref GameData gameData)
     {
-        var obj = gameData.ClientData;
+        var obj = gameData.ClientDatas;
         SaveData(ref obj);
     }
 
-    public void SaveData(ref ClientData clientData)
+    public void SaveData(ref ClientDatas clientDatas)
     {
-       clientData.playerPosition = this.transform.position;
+        ClientData clientData = null;
+        clientDatas._clientDatas.TryGetValue(GameDataManager.instance.PlayerName, out clientData);
+        clientData.currentProfileData.playerPosition = this.transform.position;
+        clientData.currentProfileData.flipX = GetComponent<SpriteRenderer>().flipX;
     }
 
     public void SaveData(ref ServerData serverData)
     {
         
     }
+
+  
 }

@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 // Service : To covert object to json format and store in the Client or Server .
 public class FileDataHandler
 {
+    // For WebGL
     //[DllImport("__Internal")]
     //private static extern void SyncFiles();
-
     //[DllImport("__Internal")]
     //private static extern void WindowAlert(string message);
 
@@ -24,13 +24,13 @@ public class FileDataHandler
         this.dataFileName = dataFileName;
     }
 
-    public ClientData LoadFromClient()
+    public ClientDatas LoadFromClient()
     {
         string fullPath = Path.Combine(dataDirPath, dataFileName);
-        ClientData loadedData = null;
+        ClientDatas loadedData = null;
         if (File.Exists(fullPath))
         {
-           loadedData = new ClientData();
+           loadedData = new ClientDatas();
             try
             {
                 string dataToLoad = "";
@@ -40,7 +40,7 @@ public class FileDataHandler
                     {
                         dataToLoad = reader.ReadToEnd();
                     }
-                    loadedData = JsonUtility.FromJson<ClientData>(dataToLoad);
+                    loadedData = JsonUtility.FromJson<ClientDatas>(dataToLoad);
                 }
             }
             catch (Exception ex)
@@ -51,10 +51,37 @@ public class FileDataHandler
         return loadedData;
     }
 
-    internal static GameData LoadFromClient(string text)
-    {
-        throw new NotImplementedException();
-    }
+    //public Dictionary<string, ProfileData> LoadAllProfilesFromClient(string playerName)
+    //{
+    //    Dictionary<string, ProfileData> result = new Dictionary<string, ProfileData>();
+    //    IEnumerable<DirectoryInfo> dirInfos = null;
+    //    try
+    //    {
+    //        dirInfos = new DirectoryInfo(Path.Combine(dataDirPath, playerName)).EnumerateDirectories();
+    //    }catch (Exception ex)
+    //    {
+    //        return result;
+    //    }
+        
+    //    foreach (DirectoryInfo dirInfo in dirInfos)
+    //    {
+    //        string profileId = dirInfo.Name;
+    //        string fullPath = Path.Combine(dataDirPath, playerName, profileId);
+    //        if (!File.Exists(fullPath)) continue;
+    //        ClientData data = LoadFromClient(playerName, profileId);
+    //        if (profileId != null)
+    //        {
+    //            result.Add(profileId, data.);
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Tried to load profile but something went wrond. " + playerName + ", " + profileId);
+    //        }
+    //    }
+
+    //    return result;
+    //}
+
 
     public ServerData LoadFromServer()
     {
@@ -73,11 +100,13 @@ public class FileDataHandler
                     }
                     loadedData = JsonUtility.FromJson<ServerData>(dataToLoad);
                 }
-               // PlatformSafeMessage("load at: " + ServerDataFullPath);
+                 // For WebGL
+                // PlatformSafeMessage("load at: " + ServerDataFullPath);
             }
             catch (Exception ex)
             {
-               // PlatformSafeMessage("Error occured when trying to load file to data: " + ServerDataFullPath + "\n" + ex);
+                 // For WebGL
+                // PlatformSafeMessage("Error occured when trying to load file to data: " + ServerDataFullPath + "\n" + ex);
             }
         }
         return loadedData;
@@ -89,7 +118,7 @@ public class FileDataHandler
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-            string clientData = JsonUtility.ToJson(data.ClientData, true);
+            string clientData = JsonUtility.ToJson(data.ClientDatas, true);
             using (FileStream stream = new FileStream(fullPath, FileMode.Create))
             {
                 using (StreamWriter writer = new StreamWriter(stream))
@@ -97,6 +126,8 @@ public class FileDataHandler
                     writer.Write(clientData);
                 }
             }
+            
+             // For WebGL
             //if (Application.platform == RuntimePlatform.WebGLPlayer)
             //{
             //    SyncFiles();
@@ -104,7 +135,8 @@ public class FileDataHandler
             //}
         } catch (Exception ex)
         {
-          //  PlatformSafeMessage("Error occured when trying to save data to file: " + fullPath + "\n" + ex);
+             // For WebGL
+            //  PlatformSafeMessage("Error occured when trying to save data to file: " + fullPath + "\n" + ex);
         }
     }
 
@@ -121,14 +153,18 @@ public class FileDataHandler
                     writer.Write(serverData);
                 }
             }
-        //    PlatformSafeMessage("Save at server: " + ServerDataFullPath);
+            // For WebGL
+            //    PlatformSafeMessage("Save at server: " + ServerDataFullPath);
         }
         catch (Exception ex)
         {
-        //    PlatformSafeMessage("Error occured when trying to save data to file: " + ServerDataFullPath + "\n" + ex);
+            // For WebGL
+            //    PlatformSafeMessage("Error occured when trying to save data to file: " + ServerDataFullPath + "\n" + ex);
         }
     }
 
+
+    // For WebGL
     //private static void PlatformSafeMessage(string message)
     //{
     //    if (Application.platform == RuntimePlatform.WebGLPlayer)

@@ -1,36 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 // Controller
 public class MainMenuController : MonoBehaviour
 {
-    
-    // add annotation
-    public void PlayGame()
+    [SerializeField] private GameObject saveSlotMenu, contuineButton, welcomeMessage;
+
+    private void Awake()
     {
-        // Service
-        string clickedObj = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.name;
-        switch (clickedObj)
+        ClientData clientData = new ClientData();
+
+        DataPersistenceManager.instance.GameData.ClientDatas._clientDatas
+            .TryGetValue(GameDataManager.instance.PlayerName, out clientData);
+
+        if (clientData.savedProfileData.Count == 0)
         {
-            case "player1":
-                GameDataManager.instance.CharIndex = 0;
-                break;
-            case "player2":
-                GameDataManager.instance.CharIndex = 1;
-                break;
+            contuineButton.GetComponent<Button>().interactable = false;
         }
-        DataPersistenceManager.instance.NewGame();
-        SceneManager.LoadScene("SampleScene");
-       
+        welcomeMessage.GetComponent<TextMeshProUGUI>().text = "Welcome, " + GameDataManager.instance.PlayerName;
     }
 
-    public void LoadGame()
+    public void LoadSaveSlotMenu()
     {
-        DataPersistenceManager.instance.LoadGame();
-        SceneManager.LoadScene("SampleScene");
-        
+        this.gameObject.SetActive(false);
+        saveSlotMenu.SetActive(true);        
+    }
+
+    public void Continue()
+    {
+        // TODO : implement the funtion which makes player can play the last time saved game.
     }
 }
 

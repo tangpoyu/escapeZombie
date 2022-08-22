@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MonsterSpawner : MonoBehaviour, IDataPersistence
 {
@@ -17,20 +18,43 @@ public class MonsterSpawner : MonoBehaviour, IDataPersistence
 
     private List<MonsterData> monsters;
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnLevelFinishedLoading;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnLevelFinishedLoading;
+    }
+
+    void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+        if(scene.name == "SampleScene")
+        {
+            StartCoroutine(SpawnMonsters());
+        }
+    }
+
+
     private void Awake()
     {
-        
+       
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        //foreach (MonsterData monster in monsters)
-        //{
-        //    GameObject m = Instantiate(monsterReference[monster.Type], monster.position);
-        //    m.GetComponent<Monster>().Type = monster.Type;
-        //}
-        StartCoroutine(SpawnMonsters());
+       
+        foreach (MonsterData monster in monsters)
+        {
+            GameObject m = Instantiate(monsterReference[monster.Type]);
+            m.GetComponent<Monster>().Type = monster.Type;
+            m.GetComponent<SpriteRenderer>().flipX = monster.flipX;
+            m.transform.position = monster.monsterPosition;
+            m.GetComponent<Monster>().Speed = monster.speed;
+        }
+        SceneManager.LoadScene("SampleScene",LoadSceneMode.Additive);
     }
 
     IEnumerator SpawnMonsters()
@@ -55,24 +79,24 @@ public class MonsterSpawner : MonoBehaviour, IDataPersistence
                 spawnedMonster.GetComponent<Monster>().Speed = -Random.Range(4, 10);
                 spawnedMonster.GetComponent<SpriteRenderer>().flipX = true;
             }
-  
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void LoadData(GameData gameData)
     {
-        
+        LoadData(gameData.ClientDatas);
+    }
+
+    public void LoadData(ClientDatas clientDatas)
+    {
+        ClientData clientData = null;
+        clientDatas._clientDatas.TryGetValue(GameDataManager.instance.PlayerName, out clientData);
+        this.monsters = clientData.currentProfileData.monsters;
     }
 
     public void LoadData(ClientData clientData)
     {
-        this.monsters = clientData.monsters;
+
     }
 
     public void LoadData(ServerData serverData)
@@ -85,13 +109,13 @@ public class MonsterSpawner : MonoBehaviour, IDataPersistence
         
     }
 
-    public void SaveData(ref ClientData clientData)
+    public void SaveData(ref ClientDatas clientDatas)
     {
         
     }
 
     public void SaveData(ref ServerData serverData)
     {
-        
+
     }
 }

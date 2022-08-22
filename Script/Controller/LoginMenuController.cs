@@ -8,6 +8,14 @@ public class LoginMenuController : MonoBehaviour
     [SerializeField]
     GameObject inputField, mainMenu;
 
+    public DataPersistenceManager DataPersistenceManager
+    {
+        get => default;
+        set
+        {
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,8 +30,7 @@ public class LoginMenuController : MonoBehaviour
 
     public void enterGame()
     {
-        GameDataManager.instance.PlayerName = inputField.GetComponent<Text>().text;
-        // DataPersistenceManager.EnterGame(inputField.GetComponent<Text>().text);
+        DataPersistenceManager.instance.EnterGame(inputField.GetComponent<Text>().text);
         mainMenu.SetActive(true);
         this.gameObject.SetActive(false);
     }
