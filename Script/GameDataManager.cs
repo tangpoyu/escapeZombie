@@ -63,7 +63,12 @@ public class GameDataManager : MonoBehaviour, IDataPersistence
     {
         if(serverData.Leaderboard.Count > 0)
         {
-            MaxScore = serverData.Leaderboard.Last().score;
+            int maxScore = 0;
+            foreach (ScoreRecord record in serverData.Leaderboard)
+            {
+                if (record.score > maxScore) maxScore = record.score;
+            }
+            this.maxScore = maxScore;
         }
     }
     public void SaveData(ref GameData gameData)
@@ -93,9 +98,13 @@ public class GameDataManager : MonoBehaviour, IDataPersistence
         {
             foreach (ScoreRecord record in serverData.Leaderboard)
             {
-                if (score < record.score)
+                if (record.playerName == playerName)
                 {
-                    serverData.Leaderboard.Insert(serverData.Leaderboard.IndexOf(record), scoreRecord);
+                    if (Score > record.score)
+                    {
+                        record.score = Score;
+                        record.charIndex = CharIndex;
+                    }
                     return;
                 }
             }

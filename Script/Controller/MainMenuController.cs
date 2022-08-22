@@ -8,7 +8,8 @@ using UnityEngine.UI;
 // Controller
 public class MainMenuController : MonoBehaviour
 {
-    [SerializeField] private GameObject saveSlotMenu, contuineButton, welcomeMessage;
+    [SerializeField] private GameObject saveSlotMenu, contuineButton, welcomeMessage, leaderBoardMenu;
+    private bool leaderBoarder;
 
     private void Awake()
     {
@@ -33,6 +34,12 @@ public class MainMenuController : MonoBehaviour
     public void Continue()
     {
         SceneManager.LoadScene("LoadScene");
+    }
+
+    public void LoadLeaderBoardMenu()
+    {
+        leaderBoarder = !leaderBoarder;
+        leaderBoardMenu.SetActive(leaderBoarder);
     }
 }
 

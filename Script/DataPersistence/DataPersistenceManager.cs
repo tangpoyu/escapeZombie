@@ -200,11 +200,7 @@ public class DataPersistenceManager : MonoBehaviour
 
     public void Restart()
     {
-        if(GameDataManager.instance.MaxScore > gameData.ServerData.Leaderboard.Last().score)
-        {
-            gameData.ServerData.Leaderboard.Last().score = GameDataManager.instance.MaxScore;
-            fileDataHandler.SaveToServer(gameData);
-        }
+        fileDataHandler.SaveToServer(gameData);
         resetCurrentProfileData();
         GameDataManager.instance.StopAllCoroutines();
         SceneManager.LoadScene("LoadScene");
