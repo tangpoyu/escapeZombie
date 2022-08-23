@@ -4,24 +4,28 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 // Service : To covert object to json format and store in the Client or Server .
 public class FileDataHandler
 {
     // For WebGL
-    //[DllImport("__Internal")]
-    //private static extern void SyncFiles();
-    //[DllImport("__Internal")]
-    //private static extern void WindowAlert(string message);
+    [DllImport("__Internal")]
+    private static extern void SyncFiles();
+    [DllImport("__Internal")]
+    private static extern void WindowAlert(string message);
 
     private string dataDirPath = "";
     private string dataFileName = "";
     private string ServerDataFullPath = Path.Combine(Directory.GetCurrentDirectory(),"ServerData", "ServerData.json");
+    private bool useEncryption = false;
+    private readonly string encryptionCode = "zombieEncryption";
 
-    public FileDataHandler(string dataDirPath, string dataFileName)
+    public FileDataHandler(string dataDirPath, string dataFileName, bool useEncryption)
     {
         this.dataDirPath = dataDirPath;
         this.dataFileName = dataFileName;
+        this.useEncryption = useEncryption;
     }
 
     public ClientDatas LoadFromClient()
@@ -39,13 +43,18 @@ public class FileDataHandler
                     using (StreamReader reader = new StreamReader(stream))
                     {
                         dataToLoad = reader.ReadToEnd();
+                        // optionally decrypt the data
+                        if (useEncryption)
+                        {
+                            dataToLoad = EncryptDecrypt(dataToLoad);
+                        }
                     }
                     loadedData = JsonUtility.FromJson<ClientDatas>(dataToLoad);
                 }
             }
             catch (Exception ex)
-            {
-               // PlatformSafeMessage("Error occured when trying to load file to data: " + fullPath + "\n" + ex);
+            { 
+                PlatformSafeMessage("Error occured when trying to load data from Client: " + fullPath + "\n" + ex);
             }
         }
         return loadedData;
@@ -97,16 +106,20 @@ public class FileDataHandler
                     using (StreamReader reader = new StreamReader(stream))
                     {
                         dataToLoad = reader.ReadToEnd();
+                        // optionally decrypt the data
+                        if (useEncryption)
+                        {
+                            dataToLoad = EncryptDecrypt(dataToLoad);
+                        }
                     }
                     loadedData = JsonUtility.FromJson<ServerData>(dataToLoad);
                 }
-                 // For WebGL
-                // PlatformSafeMessage("load at: " + ServerDataFullPath);
+           
             }
             catch (Exception ex)
             {
-                 // For WebGL
-                // PlatformSafeMessage("Error occured when trying to load file to data: " + ServerDataFullPath + "\n" + ex);
+                // For WebGL
+                PlatformSafeMessage("Error occured when trying to load data from server: " + ServerDataFullPath + "\n" + ex);
             }
         }
         return loadedData;
@@ -119,6 +132,13 @@ public class FileDataHandler
         {
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
             string clientData = JsonUtility.ToJson(data.ClientDatas, true);
+
+            // optionally encrypt the data
+            if (useEncryption)
+            {
+                clientData = EncryptDecrypt(clientData);
+            }
+
             using (FileStream stream = new FileStream(fullPath, FileMode.Create))
             {
                 using (StreamWriter writer = new StreamWriter(stream))
@@ -126,17 +146,18 @@ public class FileDataHandler
                     writer.Write(clientData);
                 }
             }
-            
-             // For WebGL
-            //if (Application.platform == RuntimePlatform.WebGLPlayer)
-            //{
-            //    SyncFiles();
-            //    PlatformSafeMessage("Save at Client: " + fullPath);
-            //}
-        } catch (Exception ex)
+
+            // For WebGL
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                SyncFiles();
+                PlatformSafeMessage("Save at Client: " + fullPath);
+            }
+        }
+        catch (Exception ex)
         {
-             // For WebGL
-            //  PlatformSafeMessage("Error occured when trying to save data to file: " + fullPath + "\n" + ex);
+            //For WebGL
+              PlatformSafeMessage("Error occured when trying to save data to file: " + fullPath + "\n" + ex);
         }
     }
 
@@ -146,6 +167,13 @@ public class FileDataHandler
         {
             Directory.CreateDirectory(Path.GetDirectoryName(ServerDataFullPath));
             string serverData = JsonUtility.ToJson(data.ServerData, true);
+
+            // optionally encrypt the data
+            if (useEncryption)
+            {
+                serverData = EncryptDecrypt(serverData);
+            }
+
             using (FileStream stream = new FileStream(ServerDataFullPath, FileMode.Create))
             {
                 using (StreamWriter writer = new StreamWriter(stream))
@@ -153,27 +181,44 @@ public class FileDataHandler
                     writer.Write(serverData);
                 }
             }
+
             // For WebGL
-            //    PlatformSafeMessage("Save at server: " + ServerDataFullPath);
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                SyncFiles();
+                PlatformSafeMessage("Save at Server: " + ServerDataFullPath);
+            }
+
         }
         catch (Exception ex)
         {
-            // For WebGL
-            //    PlatformSafeMessage("Error occured when trying to save data to file: " + ServerDataFullPath + "\n" + ex);
+           // For WebGL
+                PlatformSafeMessage("Error occured when trying to save data to file: " + ServerDataFullPath + "\n" + ex);
         }
+    }
+
+    private string EncryptDecrypt(string data)
+    {
+        string modifiedData = "";
+        foreach(var a in data.Select((value, index) => new {value, index}))
+        {
+            modifiedData += (char)(a.value ^ encryptionCode[a.index % encryptionCode.Length]);
+        }
+
+        return modifiedData;
     }
 
 
     // For WebGL
-    //private static void PlatformSafeMessage(string message)
-    //{
-    //    if (Application.platform == RuntimePlatform.WebGLPlayer)
-    //    {
-    //      //  WindowAlert(message);
-    //    }
-    //    else
-    //    {
-    //        Debug.Log(message);
-    //    }
-    //}
+    private static void PlatformSafeMessage(string message)
+    {
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
+        {
+            WindowAlert(message);
+        }
+        else
+        {
+            Debug.Log(message);
+        }
+    }
 }

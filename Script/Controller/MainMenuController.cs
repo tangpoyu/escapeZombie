@@ -27,12 +27,14 @@ public class MainMenuController : MonoBehaviour
 
     public void LoadSaveSlotMenu()
     {
+        leaderBoardMenu.SetActive(false);
         this.gameObject.SetActive(false);
         saveSlotMenu.SetActive(true);        
     }
 
     public void Continue()
     {
+        leaderBoardMenu.SetActive(false);
         SceneManager.LoadScene("LoadScene");
     }
 

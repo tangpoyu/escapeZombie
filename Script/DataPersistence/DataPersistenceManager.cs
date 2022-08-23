@@ -12,6 +12,7 @@ public class DataPersistenceManager : MonoBehaviour
 {
     [Header(("File Storage Config"))]
     [SerializeField] private string filename;
+    [SerializeField] private bool useEncryption;
 
     private GameData gameData; // Model
     private List<IDataPersistence> dataPersistenceList;
@@ -52,7 +53,7 @@ public class DataPersistenceManager : MonoBehaviour
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
-        this.fileDataHandler = new FileDataHandler(Application.persistentDataPath, filename);
+        this.fileDataHandler = new FileDataHandler(Application.persistentDataPath, filename, useEncryption);
         GameData = new GameData();
         ClientDatas clientDatas = fileDataHandler.LoadFromClient();
         if (clientDatas != null) gameData.ClientDatas = clientDatas;
@@ -132,21 +133,37 @@ public class DataPersistenceManager : MonoBehaviour
     {
         FindAllDataPersistenceObjects();
         switch(type){
-            case "clientData":
-                foreach (IDataPersistence dataPersistence in dataPersistenceList)
-                {
-                    dataPersistence.LoadData((ClientData)data);
-                }
-                break;
-
-            case "gameData":
+             case "gameData":
                 foreach (IDataPersistence dataPersistence in dataPersistenceList)
                 {
                     dataPersistence.LoadData((GameData)data);
                 }
                 break;
+
+            case "clientData":
+                foreach (IDataPersistence dataPersistence in dataPersistenceList)
+                {
+                    dataPersistence.LoadData((ClientData)data);
+                }
+                break;              
         }
     }
+
+    public void Save(Data data, string type)
+    {
+        FindAllDataPersistenceObjects();
+        switch (type)
+        {
+            case "ServerData":
+                var obj = (ServerData)data;
+                foreach (IDataPersistence dataPersistence in dataPersistenceList)
+                {
+                    dataPersistence.SaveData(ref obj);
+                }
+                break;
+        }
+    }
+         
 
     //public void LoadGame(string playerName , string selectedProfileId)
     //{
@@ -169,13 +186,8 @@ public class DataPersistenceManager : MonoBehaviour
 
     public string UpdateLeaderboard()
     {
-        var obj = gameData.ServerData;
         // To save dataPersistence data in gameData;
-        foreach (IDataPersistence dataPersistence in dataPersistenceList)
-        {
-            dataPersistence.SaveData(ref obj);
-        }
-        // print("Saved MaxScore :" + GameData.ServerData.maxScore);
+        Save(gameData.ServerData, "ServerData");
 
         // To convert saved gameData to json format and store in server
         fileDataHandler.SaveToServer(GameData);
@@ -200,6 +212,7 @@ public class DataPersistenceManager : MonoBehaviour
 
     public void Restart()
     {
+        Save(gameData.ServerData, "ServerData");
         fileDataHandler.SaveToServer(gameData);
         resetCurrentProfileData();
         GameDataManager.instance.StopAllCoroutines();
