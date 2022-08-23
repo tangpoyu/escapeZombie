@@ -11,6 +11,14 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private GameObject saveSlotMenu, contuineButton, welcomeMessage, leaderBoardMenu;
     private bool leaderBoarder;
 
+    public DataPersistenceManager DataPersistenceManager
+    {
+        get => default;
+        set
+        {
+        }
+    }
+
     private void Awake()
     {
         ClientData clientData = new ClientData();

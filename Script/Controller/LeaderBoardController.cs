@@ -8,6 +8,22 @@ public class LeaderBoardController : MonoBehaviour
     [SerializeField] GameObject scorePrefab;
     [SerializeField] Transform scores;
 
+    public DataPersistenceManager DataPersistenceManager
+    {
+        get => default;
+        set
+        {
+        }
+    }
+
+    public Score Score
+    {
+        get => default;
+        set
+        {
+        }
+    }
+
     private void Awake()
     {
         Dictionary<string, int> leaderBoards = new Dictionary<string, int>();
